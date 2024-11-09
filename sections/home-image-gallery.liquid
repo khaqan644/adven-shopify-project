@@ -1,0 +1,198 @@
+{% if section.settings.enable_overlay %}
+{% assign section_overlay = 'dt-sc-overlay' %}
+{% endif %}
+
+{% case section.settings.grid %}
+{% when '1' %}
+{%- assign column = 'one-column' -%}
+{% when '2' %}
+{%- assign column = 'two-column' -%}
+{% when '3' %}
+{%- assign column = 'three-column' -%}              
+{% when '4' %}
+{%- assign column = 'four-column' -%}              
+{% when '5' %}
+{%- assign column = 'five-column' -%}   
+{% when '6' %}
+{%- assign column = 'six-column' -%}   
+{% else %}
+{%- assign column = 'three-column' -%}              
+{% endcase %} 
+{% if section.settings.show_background_image %}
+{% assign lazyScript = "lazyload" %}
+{% endif %}
+<div class="dt-sc-section-wrapper {{lazyScript}} {{section_overlay}} {% if section.settings.background_style == 'parallax' %} parallax-initiated{% endif %}" style="{% render 'bg-color-image-padding' %}" data-style="parallax" {{background_style}} {% include 'bg_image' %}>  
+  <div class="{% render 'container-settings' %}"> 
+    <div class="row {{ section.settings.custom_class_name }}"> 
+      {% render 'section-heading', class: section.id %} 
+      {%- if section.blocks.size > 0 -%}
+      <ul class="dt-sc-column {{column}}">
+        {%- for block in section.blocks -%}
+        <li class="image-bar__item" {{ block.shopify_attributes }}>
+          {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}">
+            {%- endif -%}
+            {%- if block.settings.image != blank -%}
+            {{ block.settings.image | img_url: 'master', scale: 2 | img_tag: block.settings.image.alt }}
+            {%- else -%}
+            {{ 'logo' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+            {%- if block.settings.link != blank -%}
+          </a>
+          {%- endif -%}
+        </li>
+        {%- endfor -%}
+      </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+
+<style>
+  
+  #shopify-section-{{section.id}}.home-image-gallery .dt-sc-heading .dt-sc-main-heading { color: var(--DTColor_Body); color:{{ section.settings.section_heading_color }}; } 
+  #shopify-section-{{section.id}}.home-image-gallery .dt-sc-heading .dt-sc-sub-heading { color: var(--DTColor_Body); color:{{ section.settings.section_sub_heading_color }}; } 
+  #shopify-section-{{section.id}}.home-image-gallery .dt-sc-heading .dt-sc-heading-description { color: var(--DTColor_Body); color:{{ section.settings.section_description_color }}; } 
+  #shopify-section-{{section.id}}.home-image-gallery .dt-sc-heading .dt-sc-btn { 
+    background: var(--DT_Button_BG_Color); background:{{ section.settings.section_button_bg_color }}; 
+    color: var(--DT_Button_Text_Color); color:{{ section.settings.section_button_text_color }}; 
+  }
+  #shopify-section-{{section.id}}.home-image-gallery .dt-sc-heading .dt-sc-btn:hover { 
+    background: var(--DT_Button_BG_Hover_Color); background:{{ section.settings.section_button_hover_bg_color }}; 
+    color: var(--DT_Button_Text_Hover_Color); color:{{ section.settings.section_button_hover_text_color }}; 
+  }
+  
+  #shopify-section-{{section.id}}.home-image-gallery .dt-sc-overlay:before  { 
+    color: var(--DTTertiaryColor); 
+      color: {{ section.settings.background_color }};    
+      background: currentcolor; 
+      opacity: {{ section.settings.overlay_transparency }}; 
+      }
+  
+  .home-image-gallery .row > .dt-sc-column { gap: 0; margin: 0; }
+  .home-image-gallery .image-bar__item img { width: 100%; }
+  
+</style>
+
+{% schema %}
+{
+  "name": "Home image gallery",
+  "class": "index-section home-image-gallery",
+  "max_blocks": 10,
+  "settings": [
+     {
+    "type": "checkbox",
+    "id": "full",
+    "label": "Show Full width"
+    },
+    {
+    "type": "checkbox",
+    "id": "spacing_both_ends",
+    "label": "Enable Right & Left Spacing (Works only on Fullwidth)",
+    "default": false
+    },
+    {
+    "type": "text",
+    "id": "padding",
+    "label": "Style value (Padding)",
+    "default":"0,0",
+    "info":"Top(px),Bottom(px)"
+    },
+    {
+    "type": "text",
+    "id": "margin",
+    "label": "Style value (Margin)",
+    "default":"0,0",
+    "info":"Top(px),Bottom(px)"
+    },
+  {
+  "type": "checkbox",
+  "id": "enable_overlay",
+  "label": "Enable Background Color (Used as Background Image Overlay Color too)"
+  },
+  {
+  "type": "color",
+  "id": "background_color",
+  "label":"Background color"
+  },
+  {
+  "type": "text",
+  "id": "overlay_transparency",
+  "label": "Overlay Transparency (0.01 to 1)",
+  "default": "0.5"
+  },
+{
+"type": "select",
+"id": "grid",
+"label": "Items per row (This will not work, if carousel enabled)",
+"default": "3",
+"options": [
+{
+"value": "1",
+"label": "1"
+},
+{
+"value": "2",
+"label": "2"
+},
+{
+"value": "3",
+"label": "3"
+},
+{
+"value": "4",
+"label": "4"
+},
+{
+"value": "5",
+"label": "5"
+},
+{
+"value": "6",
+"label": "6"
+}
+]
+}
+  ],
+  "blocks": [
+    {
+      "type": "image_image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "info": "Optional"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Home image gallery",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "image_image"
+        },
+        {
+          "type": "image_image"
+        },
+        {
+          "type": "image_image"
+        },
+        {
+          "type": "image_image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
